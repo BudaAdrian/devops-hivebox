@@ -52,4 +52,18 @@ Here is a pre-start checklist:
 
 ## Implementation
 
-** ADD YOUR IMPLEMENTATION DOCUMENTATION HERE **
+### Python requirements
+
+- Python 3.12
+
+### How to run
+
+The script can be run by simply executing `python3 ./src/app.py`.
+
+At the moment, the only output will be the version of the app.
+
+### Deploy Docker container
+
+The Hivebox app comes with a Dockerfile which can be built with `docker build --tag hivebox-py:latest .` run from the root of the project.
+
+After creation, the Docker image can be run with `docker run --rm hivebox-py`.
