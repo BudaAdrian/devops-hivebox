@@ -1,0 +1,22 @@
+name: Merge to main branch
+# Will be triggered on a merge to the main branch (via a PR). Does all verification steps as in pr-verification.yml and it everything passes then it will publish the resulting Docker image.
+on:
+  push:
+    branches: [ "main" ]
+jobs:
+  prepare-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: "hivebox-py:latest"
+  merge-verify:
+      needs: prepare-tag
+      uses: ./.github/workflows/build-and-test.yml
+      with:
+        image_tag: ${{ needs.prepare-tag.outputs.image-tag }}
+  publish-image:
+    needs: [prepare-tag, merge-verify]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish Docker image
+        run: echo "Publishing Docker image with tag ${{ needs.prepare-tag.outputs.image-tag }}

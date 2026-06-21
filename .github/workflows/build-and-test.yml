@@ -1,0 +1,51 @@
+name: build-and-test
+# This workflow builds the Docker image, runs tests, and performs linting on the codebase.
+on:
+  workflow_call:
+    inputs:
+      image_tag:
+        description: 'Tag for the Docker image'
+        required: true
+        type: string
+
+jobs:
+  python-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/ruff-action@v4.0.0
+        with:
+          src: "./src"
+          args: "--version"
+      - name: Run Ruff linter
+        run: |
+          echo "Running Ruff version $(ruff --version)"
+          ruff check ./src
+  docker-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint Dockerfile with hadolint
+        uses: hadolint/hadolint-action@v3.3.0
+        with:
+          dockerfile: Dockerfile
+  docker-build-and-scan:
+    needs: [python-lint, docker-lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build . --file Dockerfile --tag "${{ inputs.image_tag }}"
+      - name: Scan Docker image for vulnerabilities
+        uses: aquasecurity/trivy-action@v0.12.0
+        with:
+          image-ref: ${{ inputs.image_tag }}
+  run-tests:
+    needs: docker-build-and-scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: |
+          echo "Running tests on Docker image ${{ inputs.image_tag }}"
+          docker run --rm ${{ inputs.image_tag }} | grep -q "0.0.2"
