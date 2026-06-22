@@ -58,9 +58,7 @@ jobs:
         with:
           name: docker-image
       - name: Load Docker image from tarball
-        run: |
-          docker load -i image.tar
-          ls -al
+        run: docker load -i image.tar
       - name: Run tests
         run: |
           echo "Running tests on Docker image ${{ inputs.image_tag }}"
