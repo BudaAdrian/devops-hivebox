@@ -27,4 +27,4 @@ jobs:
       - name: Load Docker image from tarball
         run: docker load -i image.tar
       - name: Publish Docker image
-        run: echo "Publishing Docker image with tag ${{ needs.prepare-tag.outputs.image-tag }}
+        run: echo "Publishing Docker image with tag ${{ needs.prepare-tag.outputs.image-tag }}"
