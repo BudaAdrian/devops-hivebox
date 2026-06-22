@@ -1,0 +1,10 @@
+name: PR verification
+# Will be triggered on PR creation and on every new push to it. Runs Python and Docker linters, builds and scans the Docker image, and runs tests on it.
+on:
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  pr-verification:
+      uses: ./.github/workflows/build-and-test.yml
+      with:
+        image_tag: "hivebox-py:pr-${{ github.event.pull_request.number }}-${{ github.sha }}"
