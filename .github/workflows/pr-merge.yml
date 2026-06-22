@@ -17,6 +17,11 @@ jobs:
     needs: [prepare-tag, merge-verify]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+      - name: Load Docker image from tarball
+        run: docker load -i image.tar
       - name: Publish Docker image
         run: echo "Publishing Docker image with tag ${{ needs.prepare-tag.outputs.image-tag }}
