@@ -7,7 +7,10 @@ jobs:
   prepare-tag:
     runs-on: ubuntu-latest
     outputs:
-      image-tag: "hivebox-py:latest"
+      image-tag: ${{ steps.set-tag.outputs.image-tag }}
+    steps:
+      - id: set-tag
+        run: echo "image-tag=hivebox-py:latest" >> $GITHUB_OUTPUT
   merge-verify:
       needs: prepare-tag
       uses: ./.github/workflows/build-and-test.yml
